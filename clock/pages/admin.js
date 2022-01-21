@@ -11,7 +11,8 @@ export default function adminMain(){
     let [dateState, setDate] = useState('')
     let [selectedUser, setSelectedUser] = useState('')
     let [clockDays, setClockDays] = useState('')
-    
+    let [passBox , setPassBox] = useState(true)
+    let [passWord, setPassword] = useState('')
     let getUsers = async () => {
         let {data} = await axios.get('http://localhost:3000/api/users')
         setSelectedUser(data.data[0].name)
@@ -69,11 +70,35 @@ export default function adminMain(){
         }
     }
 
+    let askForPass = (e) => {
+        console.log(e)
+        if(!e)return null
+        if(e._reactName !== 'onClick'){
+        if(e.code !== 'Enter'){return null}
+    }
+
+        let realPass = '2022'
+        if(passWord === realPass){
+            return setPassBox(false)
+        }
+        alert('Wrong Password Try Again')
+    }
+
     useEffect(()=>{
         getUsers()
     },[])
     return(
         <div style={{height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+            <div className={passBox ? 'passBoxContainer' : 'hidden'}>
+                <div tabIndex={'1'} onKeyDown={(e)=>{askForPass(e)}} className={passBox ? 'passBox' : 'hidden'}>
+                    <label>
+                        Please Provide Admin Password
+                    <input onChange={(e)=>{setPassword(e.target.value)}}/>
+                    </label>
+                    <button onClick={(e)=>{askForPass(e)}}>Ok</button>
+
+                </div>
+            </div>
             <Link href='/'><h1>Admin Panel</h1></Link>
             <div style={{width: '100vw', height: '90vh', display: 'flex'}}>
                 <div style={{width: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
