@@ -138,8 +138,8 @@ export default function adminMain(){
                                 <tr>
                                         <th>Date</th>
                                         <th>Clock In</th>
-                                        <th>Lunch In</th>
                                         <th>Lunch Out</th>
+                                        <th>Lunch In</th>
                                         <th>Clock Out</th>
                                 </tr>
                             </thead>
@@ -149,8 +149,9 @@ export default function adminMain(){
                                 <tr style={{borderBottom: '1px solid black'}}>
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.date, 'dayyear')}`}</td>
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.clockIn)}`}</td>
-                                    <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.lunchIn)}`}</td>
+                                    
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.lunchOut)}`}</td>
+                                    <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.lunchIn)}`}</td>
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.clockOut)}`}</td>
                                 </tr>
                             )

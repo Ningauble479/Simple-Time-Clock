@@ -116,16 +116,16 @@ export default function Home() {
               <div style={{ textAlign: 'center' }}>{dateClean(currentClock.clockIn)}</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <button onClick={(e) => { sendData(e, 'lunchIn') }} style={
-              currentClock.lunchIn != false && currentClock.lunchIn != null ? { width: '100px', height: '100px', background: 'green', border: '1px solid black' } : { width: '100px', height: '100px', background: 'white', border: '1px solid black' }}
-            >Lunch In</button>
-            <div style={{ textAlign: 'center' }}>{dateClean(currentClock.lunchIn)}</div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <button onClick={(e) => { sendData(e, 'lunchOut') }} style={
               currentClock.lunchOut != false && currentClock.lunchOut != null ? { width: '100px', height: '100px', background: 'green', border: '1px solid black' } : { width: '100px', height: '100px', background: 'white', border: '1px solid black' }}
             >Lunch Out</button>
             <div style={{ textAlign: 'center' }}>{dateClean(currentClock.lunchOut)}</div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <button onClick={(e) => { sendData(e, 'lunchIn') }} style={
+              currentClock.lunchIn != false && currentClock.lunchIn != null ? { width: '100px', height: '100px', background: 'green', border: '1px solid black' } : { width: '100px', height: '100px', background: 'white', border: '1px solid black' }}
+            >Lunch In</button>
+            <div style={{ textAlign: 'center' }}>{dateClean(currentClock.lunchIn)}</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <button onClick={(e) => { sendData(e, 'clockOut') }} style={
