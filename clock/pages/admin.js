@@ -5,7 +5,7 @@ import 'react-calendar/dist/Calendar.css'
 import {format, parse, parseISO} from 'date-fns'
 import Link from 'next/link'
 
-export default function adminMain(){
+export default function AdminMain(){
     let [users, setUsers] = useState('')
     let [addedUser, setAddedUser] = useState('')
     let [dateState, setDate] = useState('')
@@ -16,7 +16,7 @@ export default function adminMain(){
     let [forgottenPunches, setForgottenPunches] = useState('')
     let [hideFix, setHideFix] = useState(true)
     let getUsers = async () => {
-        let {data} = await axios.get('http://localhost:3000/api/users')
+        let {data} = await axios.get('/api/users')
         setSelectedUser(data.data[0].name)
         setUsers(data.data)
     }
@@ -52,7 +52,7 @@ export default function adminMain(){
 
     let getClocks = async (date) => {
         let user = users.find(item => item.name === selectedUser)
-        let {data} = await axios.post('http://localhost:3000/api/getRange', {start: date[0], end: date[1], id: user._id})
+        let {data} = await axios.post('/api/getRange', {start: date[0], end: date[1], id: user._id})
         console.log(data.data)
         if(Array.isArray(data.data)){
         return setClockDays(data.data)
@@ -62,7 +62,7 @@ export default function adminMain(){
 
     let addUser = async () => {
         if(addedUser === '')return alert('Please Enter A Name')
-        let {data} = await axios.post('http://localhost:3000/api/users', {name: addedUser, email: null})
+        let {data} = await axios.post('/api/users', {name: addedUser, email: null})
         if(data.success === true){
             setUsers([...users, data.data])
             setAddedUser('')
@@ -87,12 +87,12 @@ export default function adminMain(){
     }
 
     let getForgottenPunches = async () => {
-        let {data} = await axios.get('http://localhost:3000/api/forgotPunch')
+        let {data} = await axios.get('/api/forgotPunch')
         setForgottenPunches(data.data)
     } 
 
     let fixForgottonPunch = async (id) => {
-        let {data} = await axios.post('http://localhost:3000/api/fixForgotPunch', {id: id})
+        let {data} = await axios.post('/api/fixForgotPunch', {id: id})
         console.log(data)
     }
 
@@ -113,7 +113,7 @@ export default function adminMain(){
 
                 </div>
             </div>
-            <Link href='/'><h1>Admin Panel</h1></Link>
+            <Link href='/' passHref><h1>Admin Panel</h1></Link>
             <div style={{width: '100vw', height: '90vh', display: 'flex'}}>
                 <div style={{width: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <h1>Add Worker</h1>
@@ -123,8 +123,8 @@ export default function adminMain(){
                     <button onClick={()=>{addUser()}}>Add</button>
                     </label>
                     <div>
-                        {!users ? <p>Loading...</p> : users.map((row)=>{
-                            return <p>{row.name}</p>
+                        {!users ? <p>Loading...</p> : users.map((row, i)=>{
+                            return <p key={i}>{row.name}</p>
                         })}
                     </div>
                     <div>
@@ -144,7 +144,7 @@ export default function adminMain(){
                             {!forgottenPunches ? null : forgottenPunches.map((row)=>{
                             if(row.fixed && hideFix) return null;
                             return (
-                                <tr style={{borderBottom: '1px solid black'}}>
+                                <tr key={row._id} style={{borderBottom: '1px solid black'}}>
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.day, 'dayyear')}`}</td>
                                     <td style={{textAlign: 'center'}}>{row.employee.name}</td>
                                     <td style={{textAlign: 'center'}}>{row.reason}</td>
@@ -161,8 +161,8 @@ export default function adminMain(){
                 <div style={{width: '50%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
                     <h1>View Clocks</h1>
                     <select onChange={(e)=>{selectUser(e)}} style={{width: '50%', marginBottom: '50px'}}>
-                        {!users ? <option>Loading...</option> : users.map((row)=>{
-                            return <option>{row.name}</option>
+                        {!users ? <option>Loading...</option> : users.map((row, i)=>{
+                            return <option key={i}>{row.name}</option>
                         })}
                     </select>
                     <div style={{maxWidth:'80%'}}>
@@ -190,7 +190,7 @@ export default function adminMain(){
                             <tbody>
                             {!clockDays ? null : !clockDays[0]?.date ? null : clockDays.map((row)=>{
                             return (
-                                <tr style={{borderBottom: '1px solid black'}}>
+                                <tr key={row._id} style={{borderBottom: '1px solid black'}}>
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.date, 'dayyear')}`}</td>
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.clockIn)}`}</td>
                                     

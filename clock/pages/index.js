@@ -28,7 +28,7 @@ export default function Home() {
 
     if (name === 'none' || !name) { return alert('Please Select Your Name') }
     let user = users.find(item => item.name === name)
-    let { data } = await axios.post('http://localhost:3000/api/clock', { type: type, id: user._id })
+    let { data } = await axios.post('/api/clock', { type: type, id: user._id })
     if (data.success === true) {
       console.log(data)
       setCurrentClock(data.data)
@@ -61,7 +61,7 @@ export default function Home() {
       }, 5000)
     }
     let user = users.find(item => item.name === name)
-    let {data} = await axios.post('http://localhost:3000/api/forgotPunch', {id: user._id, punch: forgotPunchSelect, reason: reason, fixedTime: correctTime})
+    let {data} = await axios.post('/api/forgotPunch', {id: user._id, punch: forgotPunchSelect, reason: reason, fixedTime: correctTime})
     console.log(data)
     setAlertMessage('You submitted a forgotton punch!')
     setAlert('success')
@@ -73,8 +73,8 @@ export default function Home() {
   }
 
   let getUsers = async () => {
-    let { data } = await axios.get('http://localhost:3000/api/users')
-    let data2 = await axios.post('http://localhost:3000/api/getToday', { id: data.data[0]._id })
+    let { data } = await axios.get('/api/users')
+    let data2 = await axios.post('/api/getToday', { id: data.data[0]._id })
     let clock = data2.data.data
     if(clock){setCurrentClock(clock)}
     setUsers(data.data)
@@ -85,7 +85,7 @@ export default function Home() {
     setName(e.target.value)
     console.log(e.target.value)
     let user = users.find(item => item.name === e.target.value)
-    let { data } = await axios.post('http://localhost:3000/api/getToday', { id: user })
+    let { data } = await axios.post('/api/getToday', { id: user })
     console.log(data.data)
     if(data.data === null){
      return setCurrentClock({
@@ -105,7 +105,7 @@ export default function Home() {
     return fixedDate
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     getUsers()
   }, [])
 
@@ -134,7 +134,7 @@ export default function Home() {
             <button style={{width: '90%', height: '50px', marginTop: '25px'}} onClick={()=>{forgotToPunch()}}>Submit</button>
         </div>
       </div>
-      <div style={{ position: 'fixed', top: '15px', right: '20px' }}><Link href='/admin'><button>Admin Panel</button></Link></div>
+      <div style={{ position: 'fixed', top: '15px', right: '20px' }}><Link href='/admin' passHref><button>Admin Panel</button></Link></div>
       <h1 style={{ maxWidth: '100vw', textAlign: 'center' }}>Great Woods Time Clock</h1>
       <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', minHeight: '70vh' }}>
         <form style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'space-around', minHeight: '50%' }}>
@@ -143,8 +143,8 @@ export default function Home() {
             <select value={name ? name 
               : users ? users[0].name
               : 'loading...'} style={{ marginBottom: '15px', width: '100%', height: '50px' }} onChange={(e) => handleChange(e)}>
-              {!users ? <option>loading</option> : users.map((row) => {
-                return <option style={{ minHeight: '50px' }}>{row.name}</option>
+              {!users ? <option>loading</option> : users.map((row, i) => {
+                return <option key={i} style={{ minHeight: '50px' }}>{row.name}</option>
               })}
             </select>
           </label>
