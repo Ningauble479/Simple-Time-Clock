@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
-import {format, formatDistance, parse, parseISO} from 'date-fns'
+import {differenceInMinutes, format, formatDistance, parse, parseISO} from 'date-fns'
 import Link from 'next/link'
 
 export default function AdminMain(){
@@ -97,8 +97,23 @@ export default function AdminMain(){
     }
 
     let timeMath = (row) => {
-        let time = formatDistance(parseISO(row.clockIn), parseISO(row.clockOut))
-        return time
+        if(!row.lunchIn || !row.lunchOut){
+            let time = differenceInMinutes(parseISO(row.clockOut), parseISO(row.clockIn))
+            console.log({noLunch: time})
+            return parseFloat(time/60).toFixed(2)
+        }
+        let time1 = differenceInMinutes(parseISO(row.lunchIn), parseISO(row.clockIn))
+        let time2 = differenceInMinutes(parseISO(row.clockOut), parseISO(row.lunchOut))
+        let fullTime = time1+time2
+        return parseFloat(fullTime/60).toFixed(2)
+    }
+
+    let getTotalTime = (row) => {
+        let total = 0
+        for(let i=0; i < row.length; i++){
+            total = total+parseFloat(timeMath(row[i]))
+        }
+        return total.toFixed(2)
     }
 
     useEffect(()=>{
@@ -207,6 +222,14 @@ export default function AdminMain(){
                                 </tr>
                             )
                         })}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style={{textAlign: 'center'}}>{!clockDays ? null : !clockDays[0]?.date ? null : getTotalTime(clockDays)}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
