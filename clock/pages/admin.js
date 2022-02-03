@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
-import {format, parse, parseISO} from 'date-fns'
+import {format, formatDistance, parse, parseISO} from 'date-fns'
 import Link from 'next/link'
 
 export default function AdminMain(){
@@ -96,6 +96,11 @@ export default function AdminMain(){
         console.log(data)
     }
 
+    let timeMath = (row) => {
+        let time = formatDistance(parseISO(row.clockIn), parseISO(row.clockOut))
+        return time
+    }
+
     useEffect(()=>{
         getUsers()
         getForgottenPunches()
@@ -185,6 +190,7 @@ export default function AdminMain(){
                                         <th>Lunch Out</th>
                                         <th>Lunch In</th>
                                         <th>Clock Out</th>
+                                        <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -197,6 +203,7 @@ export default function AdminMain(){
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.lunchOut)}`}</td>
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.lunchIn)}`}</td>
                                     <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.clockOut)}`}</td>
+                                    <td style={{textAlign: 'center'}}>{timeMath(row)}</td>
                                 </tr>
                             )
                         })}
