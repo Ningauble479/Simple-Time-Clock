@@ -13,6 +13,8 @@ export default function adminMain(){
     let [clockDays, setClockDays] = useState('')
     let [passBox , setPassBox] = useState(true)
     let [passWord, setPassword] = useState('')
+    let [forgottenPunches, setForgottenPunches] = useState('')
+    let [hideFix, setHideFix] = useState(true)
     let getUsers = async () => {
         let {data} = await axios.get('http://localhost:3000/api/users')
         setSelectedUser(data.data[0].name)
@@ -27,7 +29,7 @@ export default function adminMain(){
     let dateClean = date => {
         console.log(date)
         if(!date) return null
-        let fixed = format(date, 'MMM Do y')
+        let fixed = format(date, 'MMM do y')
         console.log(fixed)
         return fixed
     }
@@ -36,7 +38,7 @@ export default function adminMain(){
         if(!date || date === null) {
             console.log('returned null')
             return null}
-        let fixed = format(parseISO(date), `${type === 'dayyear' ? 'MMM Do y' : 'h:mm b'}`)
+        let fixed = format(parseISO(date), `${type === 'dayyear' ? 'MMM do y' : 'h:mm b'}`)
         console.log(fixed)
         return fixed
     }
@@ -84,8 +86,19 @@ export default function adminMain(){
         alert('Wrong Password Try Again')
     }
 
+    let getForgottenPunches = async () => {
+        let {data} = await axios.get('http://localhost:3000/api/forgotPunch')
+        setForgottenPunches(data.data)
+    } 
+
+    let fixForgottonPunch = async (id) => {
+        let {data} = await axios.post('http://localhost:3000/api/fixForgotPunch', {id: id})
+        console.log(data)
+    }
+
     useEffect(()=>{
         getUsers()
+        getForgottenPunches()
     },[])
     return(
         <div style={{height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
@@ -96,6 +109,7 @@ export default function adminMain(){
                     <input onChange={(e)=>{setPassword(e.target.value)}}/>
                     </label>
                     <button onClick={(e)=>{askForPass(e)}}>Ok</button>
+                    <Link href='/'>Home</Link>
 
                 </div>
             </div>
@@ -112,6 +126,36 @@ export default function adminMain(){
                         {!users ? <p>Loading...</p> : users.map((row)=>{
                             return <p>{row.name}</p>
                         })}
+                    </div>
+                    <div>
+                        <h1>Forgotten Punches</h1>
+                        <div>
+                        <table style={{border: '1px solid black', minWidth: '40vw'}}>
+                            <thead>
+                                <tr>
+                                        <th>Date</th>
+                                        <th>Employee</th>
+                                        <th>Reason</th>
+                                        <th>Correct Time</th>
+                                        <th>Fixed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {!forgottenPunches ? null : forgottenPunches.map((row)=>{
+                            if(row.fixed && hideFix) return null;
+                            return (
+                                <tr style={{borderBottom: '1px solid black'}}>
+                                    <td style={{textAlign: 'center'}}>{`${dateCleanISO(row.day, 'dayyear')}`}</td>
+                                    <td style={{textAlign: 'center'}}>{row.employee.name}</td>
+                                    <td style={{textAlign: 'center'}}>{row.reason}</td>
+                                    <td style={{textAlign: 'center'}}>{row.fixedTime}</td>
+                                    <td style={{textAlign: 'center'}}>{row.fixed ? 'Yes' : <button onClick={(e)=>{fixForgottonPunch(row._id)}}>Yes</button>}</td>
+                                </tr>
+                            )
+                        })}
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                 </div>
                 <div style={{width: '50%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>

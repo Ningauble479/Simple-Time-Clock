@@ -11,12 +11,17 @@ export default function Home() {
   let [users, setUsers] = useState('')
   let [alert, setAlert] = useState('')
   let [alertMessage, setAlertMessage] = useState('')
+  let [forgotPunch, setForgotPunch] = useState(false)
+  let [forgotPunchSelect, setForgotPunchSelect] = useState('Clock In')
+  let [reason, setReason] = useState(null)
+  let [correctTime, setCorrectTime] = useState(null)
   let [currentClock, setCurrentClock] = useState({
     clockIn: false,
     lunchIn: false,
     lunchOut: false,
     clockOut: false
   })
+
   let sendData = async (e, type, id) => {
     e.preventDefault()
     e.stopPropagation()
@@ -46,8 +51,25 @@ export default function Home() {
     }
   }
 
-  let addUser = async () => {
-    axios.post('http://localhost:3000/api/users', { name: 'devon', email: 'devonvowen@gmail.com' })
+  let forgotToPunch = async () => {
+    if(!reason || !correctTime || !forgotPunchSelect || !name){
+      setAlertMessage('Please Fill In All Info')
+      setAlert('failed')
+      return setTimeout(() => {
+        setAlert('')
+        setAlertMessage('')
+      }, 5000)
+    }
+    let user = users.find(item => item.name === name)
+    let {data} = await axios.post('http://localhost:3000/api/forgotPunch', {id: user._id, punch: forgotPunchSelect, reason: reason, fixedTime: correctTime})
+    console.log(data)
+    setAlertMessage('You submitted a forgotton punch!')
+    setAlert('success')
+    setForgotPunch(false)
+    return setTimeout(() => {
+      setAlert('')
+      setAlertMessage('')
+    }, 5000)
   }
 
   let getUsers = async () => {
@@ -94,6 +116,24 @@ export default function Home() {
           {alertMessage}
         </div>
       </div>
+      <div className={forgotPunch ? 'forgotPunchCont' : 'hidden'}>
+        <div className={forgotPunch ? 'forgotPunch' : 'hidden'}>
+            <button onClick={()=>{setForgotPunch(false)}}>Cancel</button>
+            <p>Your Name: {name}</p>
+            <p>Which Punch</p>
+            <div style={{width: '100%', display: 'flex', justifyContent: 'space-around'}}>
+              <button style={forgotPunchSelect === 'Clock In' ? {width: '100px', height: '100px', background: 'green'} : {width: '100px', height: '100px'}} onClick={()=>{setForgotPunchSelect('Clock In')}}>Clock In</button>
+              <button style={forgotPunchSelect === 'Lunch Out' ? {width: '100px', height: '100px', background: 'green'} : {width: '100px', height: '100px'}} onClick={()=>{setForgotPunchSelect('Lunch Out')}}>Lunch Out</button>
+              <button style={forgotPunchSelect === 'Lunch In' ? {width: '100px', height: '100px', background: 'green'} : {width: '100px', height: '100px'}} onClick={()=>{setForgotPunchSelect('Lunch In')}}>Lunch In</button>
+              <button style={forgotPunchSelect === 'Clock Out' ? {width: '100px', height: '100px', background: 'green'} : {width: '100px', height: '100px'}} onClick={()=>{setForgotPunchSelect('Clock Out')}}>Clock Out</button>
+            </div>
+            <p>Reason you forgot:</p>
+            <input style={{width: '90%'}} defaultValue={reason} onChange={(e)=>{setReason(e.target.value)}}/>
+            <p>Correct Time:</p>
+            <input style={{width: '90%'}} defaultValue={correctTime} onChange={(e)=>{setCorrectTime(e.target.value)}}/>
+            <button style={{width: '90%', height: '50px', marginTop: '25px'}} onClick={()=>{forgotToPunch()}}>Submit</button>
+        </div>
+      </div>
       <div style={{ position: 'fixed', top: '15px', right: '20px' }}><Link href='/admin'><button>Admin Panel</button></Link></div>
       <h1 style={{ maxWidth: '100vw', textAlign: 'center' }}>Great Woods Time Clock</h1>
       <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', minHeight: '70vh' }}>
@@ -134,6 +174,9 @@ export default function Home() {
             <div style={{ textAlign: 'center' }}>{dateClean(currentClock.clockOut)}</div>
             </div>
           </div>
+          <button style={{color: 'white', marginTop: '25px', background: 'red', height: '100px'}} onClick={(e)=>{
+            e.preventDefault()
+            setForgotPunch(true)}}>Forgot To Punch</button>
         </form>
       </div>
     </div>

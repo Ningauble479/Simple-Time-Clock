@@ -30,6 +30,29 @@ a {
   border-radius: 5px;
 }
 
+.forgotPunchCont {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.forgotPunch {
+  width: 50vw;
+  height: 50vh;
+  background-color: white;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .success {
   background-color: rgb(9, 204, 9, .8);
 }
